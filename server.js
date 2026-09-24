@@ -18,30 +18,21 @@ const APP_ENV = process.env.APP_ENV || 'development';
 const APP_VERSION = process.env.APP_VERSION || pkg.version;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'app.db');
 
-// ---------------------------------------------------------------------------
 //  Database (tables are created/seeded on start-up, so a fresh container works)
-// ---------------------------------------------------------------------------
 seed(DB_PATH, { quiet: process.env.NODE_ENV === 'test' });
 const db = new DatabaseSync(DB_PATH);
 
-// ---------------------------------------------------------------------------
 //  Security middleware  (7.3HD Security stage fixes)
-// ---------------------------------------------------------------------------
-// FIX: previously fell back to a hard-coded secret in every environment.
-// Now production refuses to start without a real secret injected from Jenkins.
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
   throw new Error('SESSION_SECRET must be set in production');
 }
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 
-// FIX: security headers (CSP, X-Content-Type-Options, frameguard...).
-// HSTS / upgrade-insecure-requests are off because this demo runs over plain HTTP.
 app.use(helmet({
   strictTransportSecurity: false,
   contentSecurityPolicy: { directives: { upgradeInsecureRequests: null } },
 }));
 
-// FIX: rate-limit the write endpoints so one client can't spam bookings.
 const writeLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: Number(process.env.RATE_LIMIT_MAX) || 30,
@@ -58,9 +49,7 @@ app.use(session({
   cookie: { httpOnly: true, sameSite: 'lax' },
 }));
 
-// ---------------------------------------------------------------------------
 //  Monitoring: Prometheus metrics  (7.3HD Monitoring stage)
-// ---------------------------------------------------------------------------
 const register = new client.Registry();
 client.collectDefaultMetrics({ register });
 
@@ -86,7 +75,6 @@ const bookingsTotal = new client.Counter({
   registers: [register],
 });
 
-// Sonar fix: keep a reference instead of a bare `new` (the gauge fills itself via collect())
 const seatsRemainingGauge = new client.Gauge({
   name: 'mmm_class_seats_remaining',
   help: 'Seats remaining per class (read from the DB at scrape time)',
@@ -107,7 +95,6 @@ new client.Gauge({
 }).set({ version: APP_VERSION, env: APP_ENV }, 1);
 
 // Count + time every request. Route label uses the Express pattern (e.g. /api/classes/:id)
-// so metrics don't explode with one series per id.
 app.use((req, res, next) => {
   const end = httpDuration.startTimer();
   res.on('finish', () => {
@@ -133,9 +120,7 @@ app.get('/metrics', async (req, res) => {
   res.end(await register.metrics());
 });
 
-// ---------------------------------------------------------------------------
-//  Original MMM Art Studio booking logic (SIT774 10.3HD)
-// ---------------------------------------------------------------------------
+//  Original MMM Art Studio booking logi
 function statusFor(remaining) {
   if (remaining <= 0) return 'full';
   if (remaining <= 2) return 'limited';
@@ -225,10 +210,8 @@ function bookClassAtomically({ classId, name, email, phone, spots }) {
   }
 }
 
-// Sonar S5852 fix: domain labels exclude '.', so no two quantifiers overlap -> no catastrophic backtracking
 const EMAIL_RE = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 
-// Refactored out of the route handler (ESLint complexity rule flagged it at 14 > 12).
 function validateBooking({ classId, name, email, spots }) {
   if (!classId || !name || !email || !spots) return 'Missing required fields.';
   if (!EMAIL_RE.test(email)) return 'Please provide a valid email address.';
@@ -237,7 +220,6 @@ function validateBooking({ classId, name, email, spots }) {
   return null;
 }
 
-// Maps a failed transaction result to an HTTP status + body.
 const FAILURE_RESPONSES = {
   not_found: () => [404, { error: 'Class not found.' }],
   full:      () => [409, { error: 'Sorry, this class just filled up.', offerWaitlist: true }],
@@ -308,7 +290,6 @@ app.post('/api/waitlist', writeLimiter, async (req, res) => {
   res.status(201).json({ message: "You're on the waitlist. We'll notify you if a spot opens." });
 });
 
-// Only listen when run directly (node server.js). Tests import the app instead.
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`MMM Art Studio [${APP_ENV} v${APP_VERSION}] running at http://localhost:${PORT}`);
