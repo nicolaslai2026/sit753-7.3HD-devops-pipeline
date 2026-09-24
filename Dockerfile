@@ -1,15 +1,13 @@
-# ---------- Stage 1: install production dependencies ----------
+#  Stage 1: install production dependencies 
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# ---------- Stage 2: slim, hardened runtime ----------
+#  Stage 2: slim, hardened runtime 
 FROM node:24-alpine
 WORKDIR /usr/src/app
 
-# Security hardening: npm/corepack aren't needed at runtime and their bundled
-# packages are a common source of Trivy HIGH findings, so remove them.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
            /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 
@@ -18,7 +16,6 @@ COPY package.json server.js notify.js ./
 COPY scripts ./scripts
 COPY public ./public
 
-# Run as the unprivileged 'node' user, not root
 RUN mkdir -p data && chown -R node:node /usr/src/app
 USER node
 
