@@ -1,12 +1,9 @@
-// =============================================================================
-//  MMM Art Studio: 7-stage DevOps pipeline (SIT753 Task 7.3HD)
 //  Build -> Test -> Code Quality -> Security -> Deploy -> Release -> Monitoring
-// =============================================================================
 pipeline {
     agent any
 
     triggers {
-        pollSCM('H/2 * * * *')          // every push to GitHub starts the pipeline automatically
+        pollSCM('H/2 * * * *')       
     }
 
     options {
@@ -18,8 +15,8 @@ pipeline {
 
     environment {
         IMAGE      = 'mmm-art-studio'
-        VERSION    = "1.0.${env.BUILD_NUMBER}"      // semantic-ish version per build
-        DOCKER_NET = 'devops'                       // shared network: Jenkins, SonarQube, app, monitoring
+        VERSION    = "1.0.${env.BUILD_NUMBER}"  
+        DOCKER_NET = 'devops'                     
     }
 
     stages {
