@@ -27,16 +27,7 @@ Node.js 24 · Express · SQLite (`node:sqlite`) · vanilla JS front end · Docke
 Jenkins · Jest + Supertest · ESLint · SonarQube · npm audit · Trivy · prom-client · Prometheus ·
 Grafana · Alertmanager
 
-## Run locally (no pipeline)
-```bash
-npm install
-npm test          # 36 tests + coverage
-npm run lint
-npm start         # http://localhost:3000
-```
 
-## Run the pipeline
-See **[SETUP.md](SETUP.md)** for the full step-by-step.
 
 ## Repo layout
 ```
