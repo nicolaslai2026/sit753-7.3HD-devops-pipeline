@@ -11,8 +11,6 @@ route:
 
 receivers:
   - name: team
-    # Email alerts to the team (Gmail SMTP, same app-password approach as 7.1C).
-    # The Jenkins Monitoring stage injects the real values from Jenkins credentials.
     email_configs:
       - to: 'ALERT_EMAIL_TO'
         from: 'ALERT_EMAIL_FROM'
