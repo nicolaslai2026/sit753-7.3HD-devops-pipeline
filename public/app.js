@@ -136,7 +136,7 @@ function validate(isWaitlist) {
     $('name').classList.add('invalid'); $('nameErr').hidden = false; ok = false;
   }
   const email = $('email').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email)) {
     $('email').classList.add('invalid'); $('emailErr').hidden = false; ok = false;
   }
   if (!isWaitlist) {

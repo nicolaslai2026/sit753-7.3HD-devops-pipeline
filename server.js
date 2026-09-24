@@ -86,7 +86,8 @@ const bookingsTotal = new client.Counter({
   registers: [register],
 });
 
-new client.Gauge({
+// Sonar fix: keep a reference instead of a bare `new` (the gauge fills itself via collect())
+const seatsRemainingGauge = new client.Gauge({
   name: 'mmm_class_seats_remaining',
   help: 'Seats remaining per class (read from the DB at scrape time)',
   labelNames: ['class'],
@@ -224,7 +225,8 @@ function bookClassAtomically({ classId, name, email, phone, spots }) {
   }
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Sonar S5852 fix: domain labels exclude '.', so no two quantifiers overlap -> no catastrophic backtracking
+const EMAIL_RE = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 
 // Refactored out of the route handler (ESLint complexity rule flagged it at 14 > 12).
 function validateBooking({ classId, name, email, spots }) {
@@ -319,3 +321,4 @@ module.exports.makeRefCode = makeRefCode;
 module.exports.toClassDTO = toClassDTO;
 module.exports.bookClassAtomically = bookClassAtomically;
 module.exports.validateBooking = validateBooking;
+module.exports.seatsRemainingGauge = seatsRemainingGauge;
