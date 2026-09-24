@@ -5,3 +5,4 @@ data/*.db
 *.tar.gz
 npm-audit.json
 trivy-*.txt
+.DS_Store
