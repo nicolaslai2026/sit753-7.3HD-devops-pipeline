@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MMM Art Studio — Class Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <p class="kicker">MMM Art Studio</p>
+      <h1>Classes &amp; Workshops</h1>
+      <p class="lede">Live availability, instant booking. See what's open and reserve your spot in seconds.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Search / filter bar -->
+    <div class="toolbar">
+      <input
+        type="search"
+        id="searchInput"
+        class="search"
+        placeholder="Search classes by name or age group…"
+        aria-label="Search classes"
+      />
+      <p class="live-note" id="liveNote" aria-live="polite">
+        <span class="pulse"></span> Availability updates automatically
+      </p>
+    </div>
+
+    <!-- SCREEN 1: class cards  -->
+    <section id="classList" class="class-grid" aria-live="polite" aria-busy="true">
+      <p class="loading">Loading classes…</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>MMM Art Studio · SIT774 Task 10.3HD · Nicolas Lai s226148849</p>
+    </div>
+  </footer>
+
+  <!-- SCREEN 2 + 3: booking modal   -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close booking form">&times;</button>
+
+      <!-- SCREEN 2: the form -->
+      <div id="bookingView">
+        <h2 id="modalTitle" class="modal-title">Book a class</h2>
+
+        <div class="summary" id="summaryPanel">
+          <div>
+            <p class="summary-when" id="summaryWhen">—</p>
+            <p class="summary-spots" id="summarySpots" aria-live="polite">—</p>
+          </div>
+          <p class="summary-price" id="summaryPrice">—</p>
+        </div>
+
+        <form id="bookingForm" novalidate>
+          <input type="hidden" id="classId" />
+
+          <div class="field">
+            <label for="name">Full name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" aria-required="true" autocomplete="name" />
+            <span class="err" id="nameErr" role="alert" hidden>Please enter your full name.</span>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address <span class="req">*</span></label>
+            <input type="email" id="email" name="email" aria-required="true" autocomplete="email" />
+            <span class="err" id="emailErr" role="alert" hidden>Please enter a valid email address.</span>
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone number <span class="muted">(optional)</span></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+61…" />
+          </div>
+
+          <div class="field">
+            <label for="spots">Number of spots <span class="req">*</span></label>
+            <input type="number" id="spots" name="spots" min="1" value="1" aria-required="true" />
+            <span class="err" id="spotsErr" role="alert" hidden></span>
+          </div>
+
+          <p class="form-error" id="formError" role="alert" hidden></p>
+
+          <button type="submit" class="btn-confirm" id="confirmBtn">Confirm booking</button>
+        </form>
+      </div>
+
+      <!-- SCREEN 3: confirmation -->
+      <div id="confirmView" hidden>
+        <div class="tick" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><path d="M14 27 l8 8 l16 -18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="confirm-title">Booking confirmed!</h2>
+        <p class="confirm-class" id="confirmClass">—</p>
+        <div class="ref-box">
+          Booking ref: <strong id="confirmRef">—</strong>
+        </div>
+        <p class="confirm-note" id="confirmNote">A confirmation email is on its way.</p>
+        <div class="confirm-actions">
+          <button class="btn-ghost" id="backToClasses">Back to classes</button>
+          <button class="btn-ghost" id="addCalendar">Add to calendar</button>
+        </div>
+      </div>
+
+      <!-- Waitlist confirmation -->
+      <div id="waitlistView" hidden>
+        <div class="tick tick-amber" aria-hidden="true">
+          <svg viewBox="0 0 52 52"><path d="M26 14 v14 M26 36 v.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+        </div>
+        <h2 class="confirm-title">You're on the waitlist</h2>
+        <p class="confirm-class" id="waitlistClass">—</p>
+        <p class="confirm-note amber-note">We'll email you the moment a spot opens up.</p>
+        <div class="confirm-actions">
+          <button class="btn-ghost" id="waitlistBack">Back to classes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

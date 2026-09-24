@@ -1,0 +1,3 @@
+# Accepted / false-positive Trivy findings. Every entry MUST have a justification.
+# Format:  CVE-ID   # reason, who, date, review-by date
+# (empty = nothing currently accepted)

@@ -1,0 +1,11 @@
+# Default config: alerts are visible in the Alertmanager UI (:9093) and Prometheus (:9090/alerts).
+# If the Jenkins credential 'alert-email' exists, the Monitoring stage swaps this file for
+# alertmanager.email.tmpl.yml with real values, so alerts are also emailed to the team.
+route:
+  receiver: team
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+receivers:
+  - name: team

@@ -1,0 +1,32 @@
+groups:
+  - name: mmm-art-studio
+    rules:
+      - alert: MMMProductionDown
+        expr: up{job="mmm-art-studio", env="production"} == 0
+        for: 30s
+        labels: { severity: critical }
+        annotations:
+          summary: "MMM Art Studio production is DOWN"
+          description: "Prometheus has not been able to scrape production for 30s. Customers cannot book."
+
+      - alert: MMMHighErrorRate
+        expr: sum(rate(http_requests_total{env="production", status=~"5.."}[2m])) / sum(rate(http_requests_total{env="production"}[2m])) > 0.05
+        for: 1m
+        labels: { severity: warning }
+        annotations:
+          summary: "More than 5% of production requests are failing (5xx)"
+
+      - alert: MMMSlowResponses
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{env="production"}[5m])) by (le)) > 0.5
+        for: 2m
+        labels: { severity: warning }
+        annotations:
+          summary: "p95 latency above 500ms"
+
+      - alert: MMMClassFullyBooked
+        expr: mmm_class_seats_remaining{env="production"} == 0
+        for: 1m
+        labels: { severity: info }
+        annotations:
+          summary: "A class is fully booked: {{ $labels.class }}"
+          description: "Business alert: consider opening another session or contacting the waitlist."

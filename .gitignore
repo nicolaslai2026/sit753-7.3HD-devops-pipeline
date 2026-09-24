@@ -1,0 +1,7 @@
+node_modules/
+reports/
+data/*.db
+.env
+*.tar.gz
+npm-audit.json
+trivy-*.txt

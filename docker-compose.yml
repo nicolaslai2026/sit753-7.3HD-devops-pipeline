@@ -1,0 +1,23 @@
+# One compose file, two environments. Jenkins picks the environment with:
+#   IMAGE_TAG, HOST_PORT, ENV_NAME  (+ -p mmm-staging / -p mmm-production)
+services:
+  app:
+    image: mmm-art-studio:${IMAGE_TAG:-latest}
+    container_name: mmm-${ENV_NAME:-staging}
+    env_file:
+      - env/${ENV_NAME:-staging}.env
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET:?SESSION_SECRET is required}
+    ports:
+      - "${HOST_PORT:-3001}:3000"
+    volumes:
+      - data:/usr/src/app/data          # bookings survive redeploys
+    restart: unless-stopped
+    networks: [devops]
+
+volumes:
+  data:
+
+networks:
+  devops:
+    external: true                      # shared with Jenkins, SonarQube, Prometheus

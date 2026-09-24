@@ -1,0 +1,22 @@
+route:
+  receiver: team
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+  routes:
+    - matchers: [severity="info"]
+      receiver: team
+      repeat_interval: 12h
+
+receivers:
+  - name: team
+    # Email alerts to the team (Gmail SMTP, same app-password approach as 7.1C).
+    # The Jenkins Monitoring stage injects the real values from Jenkins credentials.
+    email_configs:
+      - to: 'ALERT_EMAIL_TO'
+        from: 'ALERT_EMAIL_FROM'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'ALERT_EMAIL_FROM'
+        auth_password: 'ALERT_EMAIL_PASS'
+        send_resolved: true

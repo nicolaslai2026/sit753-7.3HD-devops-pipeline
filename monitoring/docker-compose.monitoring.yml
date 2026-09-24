@@ -1,0 +1,30 @@
+# Images are built from this folder so no host bind-mounts are needed
+# (important because Jenkins drives Docker through the host socket).
+services:
+  prometheus:
+    build: ./prometheus
+    container_name: mmm-prometheus
+    ports: ["9090:9090"]
+    networks: [devops]
+    restart: unless-stopped
+
+  alertmanager:
+    build: ./alertmanager
+    container_name: mmm-alertmanager
+    ports: ["9093:9093"]
+    networks: [devops]
+    restart: unless-stopped
+
+  grafana:
+    build: ./grafana
+    container_name: mmm-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports: ["3300:3000"]
+    depends_on: [prometheus]
+    networks: [devops]
+    restart: unless-stopped
+
+networks:
+  devops:
+    external: true

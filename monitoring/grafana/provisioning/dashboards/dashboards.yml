@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: MMM
+    folder: MMM Art Studio
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
