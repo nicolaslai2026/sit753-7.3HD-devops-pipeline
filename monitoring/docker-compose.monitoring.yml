@@ -1,5 +1,3 @@
-# Images are built from this folder so no host bind-mounts are needed
-# (important because Jenkins drives Docker through the host socket).
 services:
   prometheus:
     build: ./prometheus
